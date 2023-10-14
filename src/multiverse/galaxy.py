@@ -1,7 +1,7 @@
+import platform
 import random
 import string
 import sys
-import platform
 
 import multiverse.constants as c
 import pygame
@@ -11,6 +11,7 @@ class Body:
     """A star or planet in the galaxy. Each body is uniquely identified by a pair of seeds.
     The first seed represents the x-coordinate of the body, and the second seed represents the y-coordinate.
     The seeds are used to determine if the body exists, its color, its radius, and if it has life."""
+
     def __init__(self, seed1, seed2):
         self.seed1 = seed1
         self.seed2 = seed2
@@ -39,6 +40,7 @@ class Galaxy:
     The galaxy is quite large (order of 2^64 or 10^19 in each direction), but only a small portion of it is visible
     at any given time. The galaxy is divided into sectors, and each sector is a square of side length equal to the
     height of the screen. The user can see the coordinates of the sector they are currently in."""
+
     def __init__(self):
         self.user_x, self.user_y = 0, 0
         self.speed = c.SPEED
