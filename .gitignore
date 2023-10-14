@@ -17,7 +17,7 @@ venv/
 *.swp
 
 # Ignore built Python distributions
-/dist/
+#/dist/
 /build/
 
 # Ignore compiled Python files
