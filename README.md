@@ -5,6 +5,7 @@ Multiverse is a simple project that demonstrates the concept of persistent proce
 random seeds. In this project, a 2D virtual galaxy is generated with celestial bodies, where properties of each are determined 
 by a unique seed based on the location within the galaxy. User can navigate the galaxy to find planets with life, which are marked
 with a green ring around them.
+
 <img alt="sample screen view" src="docs/screen.png" style="display: block; margin: 0 auto; width: 300px; height: 300px;">
 
 
