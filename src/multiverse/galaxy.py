@@ -1,3 +1,4 @@
+import platform
 import random
 import string
 import sys
@@ -6,25 +7,40 @@ import multiverse.constants as c
 import pygame
 
 
-class Star:
+class Body:
+    """A star or planet in the galaxy. Each body is uniquely identified by a pair of seeds.
+    The first seed represents the x-coordinate of the body, and the second seed represents the y-coordinate.
+    The seeds are used to determine if the body exists, its color, its radius, and if it has life."""
+
     def __init__(self, seed1, seed2):
         self.seed1 = seed1
         self.seed2 = seed2
-        seed = (seed1 & 0xFFFF) << 16 | (seed2 & 0xFFFF)
 
+        architecture = platform.architecture()[0]
+        if architecture == "64bit":
+            seed = (seed1 & 0xFFFFFFFF) << 32 | (seed2 & 0xFFFFFFFF)
+        elif architecture == "32bit":
+            seed = (seed1 & 0xFFFF) << 16 | (seed2 & 0xFFFF)
+        else:
+            raise Exception(f"Unsupported architecture: {architecture}")
         random.seed(seed)
 
-        self.exists = random.randint(1, int(1 / c.DENSITY)) == 1
+        self.exists = random.random() <= c.DENSITY
         if not self.exists:
             return
 
         self.color = random.choice(c.COLORS)
         self.radius = random.randint(c.MIN_RADIUS, c.MAX_RADIUS)
-        self.has_life = self.exists * (random.randint(1, int(1 / c.LIFE_PROB)) == 1)
+        self.has_life = self.exists * (random.random() <= c.LIFE_PROB)
         self.name = "".join(random.choice(string.ascii_uppercase + string.digits) for _ in range(6))
 
 
 class Galaxy:
+    """The galaxy is a grid of stars and planets. The user can move around the galaxy using the arrow keys.
+    The galaxy is quite large (order of 2^64 or 10^19 in each direction), but only a small portion of it is visible
+    at any given time. The galaxy is divided into sectors, and each sector is a square of side length equal to the
+    height of the screen. The user can see the coordinates of the sector they are currently in."""
+
     def __init__(self):
         self.user_x, self.user_y = 0, 0
         self.speed = c.SPEED
@@ -85,16 +101,16 @@ class Galaxy:
                 for ix in range(nx):
                     seed1 = int(self.user_x // self.grid_size) + ix
                     seed2 = int(self.user_y // self.grid_size) + iy
-                    star = Star(seed1, seed2)
-                    if star.exists:
+                    body = Body(seed1, seed2)
+                    if body.exists:
                         x = ix * self.grid_size + self.grid_size // 2
                         y = iy * self.grid_size + self.grid_size // 2
-                        pygame.draw.circle(self.screen, star.color, (x, y), star.radius)
-                        if star.has_life:
-                            pygame.draw.circle(self.screen, c.GREEN, (x, y), star.radius + self.grid_size / 3, width=1)
-                        if (mouse_x - x) ** 2 + (mouse_y - y) ** 2 <= (max(star.radius, 3 * c.MIN_RADIUS)) ** 2:
-                            star_name = self.fonts["Mono-medium"].render(star.name, True, c.WHITE)
-                            self.screen.blit(star_name, (x, y - star.radius - self.grid_size))
+                        pygame.draw.circle(self.screen, body.color, (x, y), body.radius)
+                        if body.has_life:
+                            pygame.draw.circle(self.screen, c.GREEN, (x, y), body.radius + self.grid_size / 3, width=1)
+                        if (mouse_x - x) ** 2 + (mouse_y - y) ** 2 <= (max(body.radius, 3 * c.MIN_RADIUS)) ** 2:
+                            star_name = self.fonts["Mono-medium"].render(body.name, True, c.WHITE)
+                            self.screen.blit(star_name, (x, y - body.radius - self.grid_size))
 
             self.add_location_text()
 

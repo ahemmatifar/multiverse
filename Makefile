@@ -21,3 +21,7 @@ lint:
 .PHONY: build
 build:
 	pyinstaller --onefile --name=multiverse src/multiverse/main.py
+
+.PHONY: run
+run:
+	python src/multiverse/main.py
