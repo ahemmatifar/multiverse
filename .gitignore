@@ -38,8 +38,8 @@ venv/
 .env
 
 # Ignore generated documentation
-/doc/
-/docs/
+#/doc/
+#/docs/
 
 # Ignore OS-specific files
 .DS_Store
